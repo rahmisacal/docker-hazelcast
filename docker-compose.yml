@@ -1,0 +1,28 @@
+version: '2'
+services:
+
+  hazelcast:
+    image: rsacal/hazelcast:hazelcast
+    volumes:
+        - ./resources:/configFolder
+    environment:
+        - JAVA_OPTS=-Dhazelcast.config=/configFolder/hazelcast.xml -Dhazelcast.mancenter.url=http://mancenter:8080/mancenter
+    ports:
+        - 5701:5701
+    links:
+        - "management-center:mancenter"
+    networks:
+      - hazelcast
+
+  management-center:
+    image: rsacal/hazelcast:management-center
+    environment:
+        - JAVA_OPTS=-Dhazelcast.mc.rest.enabled=true
+    ports:
+        - 8080:8080
+    networks:
+      - hazelcast
+
+networks:
+  hazelcast:
+    driver: bridge
